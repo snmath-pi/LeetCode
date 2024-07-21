@@ -5,7 +5,7 @@ public:
         for(int i=30; i>=0; i--) {
             if(!(n>>i&1)&&(k>>i&1)){
                 return -1;
-            } else if(n>>i&1 && !(k>>i&1))res++;
+            } else if(n>>i&1 && !(k>>i&1)) res++;
         }
         return res;
     }
