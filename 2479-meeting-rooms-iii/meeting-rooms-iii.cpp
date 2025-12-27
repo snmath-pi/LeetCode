@@ -1,42 +1,40 @@
 class Solution {
 public:
     int mostBooked(int n, vector<vector<int>>& meetings) {
-        int m = meetings.size();
-        
         sort(begin(meetings), end(meetings));
+        priority_queue<int, vector<int>, greater<int>> free;
+        for (int i = 0; i < n; i++) free.push(i);
 
-        priority_queue<long long, vector<long long>, greater<long long>> freeRooms;
-        for(int i = 0; i < n; i++) {
-            freeRooms.push(i);
-        }
-        
-        priority_queue<array<long long, 2>, vector<array<long long, 2>>, greater<array<long long, 2>>> bookRooms;
+        vector<int> fr(n, 0);
 
-        vector<long long> cnt(n);
-
-        for (int i = 0; i < m; i++) {
-            while (!bookRooms.empty() && bookRooms.top()[0] <= meetings[i][0]) {
-                freeRooms.push(bookRooms.top()[1]);
-                bookRooms.pop();
+        priority_queue<pair<long, int>, vector<pair<long, int>>, greater<pair<long, int>>> book;
+        for (auto& x: meetings) {
+            int a = x[0], b = x[1];
+            while (!book.empty() && book.top().first <= x[0]) {
+                free.push(book.top().second);
+                book.pop();
             }
-            if (!freeRooms.empty()) {
-                cnt[freeRooms.top()]++;
-                bookRooms.push({meetings[i][1], freeRooms.top()});
-                freeRooms.pop();
+
+            if (!free.empty()) {
+                int room = free.top(); free.pop();
+                book.push({x[1], room});
+                fr[room]++;
             } else {
-                auto [s, id] = bookRooms.top();
-                bookRooms.pop();
-                cnt[id]++;
-                bookRooms.push({s + meetings[i][1] - meetings[i][0], id});
+                auto [u, v]  = book.top(); book.pop();
+                auto s = max(u*1ll, 1ll*x[0]);
+                auto e = s + x[1] - x[0];
+                book.push({e, v});
+                fr[v]++;
+            }
+        }
+        int mx = 0, res = -1;
+        for (int i = 0; i < n; i++) {
+            if (mx < fr[i]) {
+                mx = fr[i];
+                res = i;
             }
         }
 
-        int maxRoom = 0;
-        for (int i = 0; i < n; i++) {
-            if (cnt[i] > cnt[maxRoom]) maxRoom = i;
-        }
-        return maxRoom;
-        
-
+        return res;
     }
 };
