@@ -4,11 +4,8 @@ public:
     static int hammingWeight(int num) {
         int wei = 0, mask = 1;
         while (num) {
-            if (num & mask) {
-                num ^= mask;
-                wei++;
-            }
-            mask <<= 1;
+            wei++;
+            num &= (num - 1);
         }
         return wei;
     }
