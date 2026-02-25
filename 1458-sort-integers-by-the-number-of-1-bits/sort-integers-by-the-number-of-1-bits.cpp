@@ -1,22 +1,26 @@
 class Solution {
 public:
+
+    static int hammingWeight(int num) {
+        int wei = 0, mask = 1;
+        while (num) {
+            if (num & mask) {
+                num ^= mask;
+                wei++;
+            }
+            mask <<= 1;
+        }
+        return wei;
+    }
+
+    static bool comp(int a, int b) {
+        int x = hammingWeight(a);
+        int y = hammingWeight(b);
+
+        return (x == y ? a < b : x < y);
+    }
     vector<int> sortByBits(vector<int>& arr) {
-        int n = (int) arr.size();
-        vector<int> c(n);
-        for (int i = 0; i < n; i++) {
-            c[i] = __builtin_popcount(arr[i]);
-        }
-
-        vector<int> id(n, 0);
-        iota(begin(id), end(id), 0);
-
-        sort(begin(id), end(id), [&](int x, int y) -> bool {
-            return c[x] == c[y] ? arr[x] < arr[y] : c[x] < c[y];
-        });
-
-        for (int i = 0; i < n; i++) {
-            id[i] = arr[id[i]];
-        }
-        return id;
+        sort(begin(arr), end(arr), comp);
+        return arr;
     }
 };
